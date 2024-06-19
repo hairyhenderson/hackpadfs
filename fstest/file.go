@@ -94,12 +94,12 @@ func TestFileReadAt(tb testing.TB, o FSOptions) {
 	fs := commit()
 
 	for _, tc := range []struct {
-		description string
-		bufSize     int
-		off         int64
-		expectN     int
-		expectBuf   string
 		expectErr   error
+		description string
+		expectBuf   string
+		off         int64
+		bufSize     int
+		expectN     int
 	}{
 		{
 			description: "at start",
@@ -656,9 +656,9 @@ func TestFileSync(tb testing.TB, o FSOptions) {
 func TestFileTruncate(tb testing.TB, o FSOptions) {
 	const fileContents = "hello world"
 	for _, tc := range []struct {
+		expectErrKind error
 		description   string
 		size          int64
-		expectErrKind error
 	}{
 		{
 			description:   "negative size",

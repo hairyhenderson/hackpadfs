@@ -12,7 +12,7 @@ lint-deps:
 		curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${GO_BIN}" v${LINT_VERSION}; \
 	fi
 	@if ! which jsguard >/dev/null; then \
-		go install github.com/hack-pad/safejs/jsguard/cmd/jsguard; \
+		go install github.com/hack-pad/safejs/jsguard/cmd/jsguard@latest; \
 	fi
 
 .PHONY: lint

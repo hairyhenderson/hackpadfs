@@ -91,8 +91,8 @@ func copyTarWalk(src hackpadfs.FS, archive *tar.Writer) hackpadfs.WalkDirFunc {
 func TestNewTarFromFS(t *testing.T) {
 	t.Parallel()
 	for _, tc := range []struct {
-		description string
 		do          func(t *testing.T, fs hackpadfs.FS)
+		description string
 	}{
 		{
 			description: "empty",
