@@ -27,6 +27,11 @@ jobs:
         - platform: ubuntu-latest
           go: 1.19.x
           goarch: '386'
+          # whether to enable the race detector - defaults to true
+          enable_race: 'false'
+        - platform: ubuntu-latest
+          go: 1.19.x
+          goarch: 'amd64'
         - platform: macos-latest
           go: 1.19.x
         - platform: windows-latest
@@ -38,7 +43,7 @@ jobs:
       with:
         go-version: ${{ matrix.go }}
     - name: Test
-      run: make test
+      run: make test ENABLE_RACE=${{ matrix.enable_race }}
       env:
         GOARCH: ${{ matrix.goarch }}
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}

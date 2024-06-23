@@ -2,6 +2,7 @@ BROWSERTEST_VERSION = v0.7
 LINT_VERSION = 1.50.1
 GO_BIN = $(shell printf '%s/bin' "$$(go env GOPATH)")
 SHELL = bash
+ENABLE_RACE = true
 
 .PHONY: all
 all: lint test
@@ -31,14 +32,18 @@ test-deps:
 	fi
 	@go install github.com/mattn/goveralls@v0.0.9
 
+ifeq ($(ENABLE_RACE),true)
+TEST_ARGS=-race
+endif
+
 .PHONY: test
 test: test-deps
 	go test .  # Run library-level checks first, for more helpful build tag failure messages.
-	go test -race -coverprofile=native-cover.out ./...
+	go test $(TEST_ARGS) -coverprofile=native-cover.out ./...
 	if [[ "$$CI" != true || $$(uname -s) == Linux ]]; then \
 		set -ex; \
 		GOOS=js GOARCH=wasm go test -coverprofile=js-cover.out -covermode=atomic ./...; \
-		cd examples && go test -race ./...; \
+		cd examples && go test $(TEST_ARGS) ./...; \
 	fi
 	{ echo 'mode: atomic'; cat *-cover.out | grep -v '^mode:'; } > cover.out && rm *-cover.out
 	go tool cover -func cover.out | grep total:
