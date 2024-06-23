@@ -27,10 +27,6 @@ jobs:
             goarch: '386'
           - platform: windows-latest
             goarch: '386'
-        include:
-          - goarch: '386'
-            # whether to enable the race detector - defaults to true
-            enable_race: 'false'
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v4
@@ -39,7 +35,7 @@ jobs:
         go-version: ${{ matrix.version }}
         architecture: ${{ matrix.goarch }}
     - name: Test
-      run: make test ENABLE_RACE=${{ matrix.enable_race }}
+      run: make test
       env:
         CGO_ENABLED: '0'
         GOARCH: ${{ matrix.goarch }}

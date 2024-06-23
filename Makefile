@@ -32,7 +32,11 @@ test-deps:
 	fi
 	@go install github.com/mattn/goveralls@v0.0.9
 
-ifeq ($(ENABLE_RACE),true)
+# only use the race detector on supported architectures
+race_goarches := 'amd64' 'arm64'
+ifeq (,$(findstring '$(GOARCH)',$(race_goarches)))
+TEST_ARGS=
+else
 TEST_ARGS=-race
 endif
 
