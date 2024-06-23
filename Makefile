@@ -2,6 +2,7 @@ BROWSERTEST_VERSION = v0.7
 LINT_VERSION = 1.50.1
 GO_BIN = $(shell printf '%s/bin' "$$(go env GOPATH)")
 SHELL = bash
+ENABLE_RACE = true
 
 .PHONY: all
 all: lint test
@@ -12,7 +13,7 @@ lint-deps:
 		curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${GO_BIN}" v${LINT_VERSION}; \
 	fi
 	@if ! which jsguard >/dev/null; then \
-		go install github.com/hack-pad/safejs/jsguard/cmd/jsguard; \
+		go install github.com/hack-pad/safejs/jsguard/cmd/jsguard@latest; \
 	fi
 
 .PHONY: lint
@@ -31,14 +32,25 @@ test-deps:
 	fi
 	@go install github.com/mattn/goveralls@v0.0.9
 
+# only use the race detector on supported architectures
+race_goarches := 'amd64' 'arm64'
+ifeq (,$(findstring '$(GOARCH)',$(race_goarches)))
+TEST_ARGS=
+export CGO_ENABLED=0
+else
+TEST_ARGS=-race
+# the race detector needs cgo (at least on Linux and Windows, and macOS until Go 1.20)
+export CGO_ENABLED=1
+endif
+
 .PHONY: test
 test: test-deps
 	go test .  # Run library-level checks first, for more helpful build tag failure messages.
-	go test -race -coverprofile=native-cover.out ./...
+	go test $(TEST_ARGS) -coverprofile=native-cover.out ./...
 	if [[ "$$CI" != true || $$(uname -s) == Linux ]]; then \
 		set -ex; \
 		GOOS=js GOARCH=wasm go test -coverprofile=js-cover.out -covermode=atomic ./...; \
-		cd examples && go test -race ./...; \
+		cd examples && go test $(TEST_ARGS) ./...; \
 	fi
 	{ echo 'mode: atomic'; cat *-cover.out | grep -v '^mode:'; } > cover.out && rm *-cover.out
 	go tool cover -func cover.out | grep total:

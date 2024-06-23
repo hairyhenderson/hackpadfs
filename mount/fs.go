@@ -24,8 +24,8 @@ var (
 // For ease of use, call the standard operations via hackpadfs.OpenFile(fs, ...), hackpadfs.Mkdir(fs, ...), etc.
 type FS struct {
 	rootFS  hackpadfs.FS
-	mountMu sync.Mutex
 	mounts  sync.Map // map[string]hackpadfs.FS
+	mountMu sync.Mutex
 }
 
 // NewFS returns a new FS.

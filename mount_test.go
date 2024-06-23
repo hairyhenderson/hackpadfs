@@ -8,6 +8,7 @@ import (
 	"github.com/hack-pad/hackpadfs/internal/assert"
 )
 
+//nolint:govet
 func TestStripErrPathPrefix(t *testing.T) {
 	t.Parallel()
 	someError := errors.New("some error")

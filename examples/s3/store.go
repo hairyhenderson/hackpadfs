@@ -38,8 +38,8 @@ const (
 )
 
 type store struct {
-	options Options
 	client  *minio.Client
+	options Options
 }
 
 func newStore(options Options) (*store, error) {

@@ -7,14 +7,14 @@ import (
 // bufferPool maintains a collection of byte buffers with a maximum size.
 // Used to control upper-bound memory usage. It's safe for concurrent use.
 type bufferPool struct {
-	count   int64
-	size    uint64
 	buffers chan *buffer
+	count   atomic.Int64
+	size    atomic.Uint64
 }
 
 type buffer struct {
-	Data []byte
 	pool *bufferPool
+	Data []byte
 }
 
 func newBufferPool(bufferSize, maxBuffers uint64) *bufferPool {
@@ -22,25 +22,25 @@ func newBufferPool(bufferSize, maxBuffers uint64) *bufferPool {
 		maxBuffers = 1
 	}
 	p := &bufferPool{
-		size:    bufferSize,
 		buffers: make(chan *buffer, maxBuffers),
 	}
+	p.size.Store(bufferSize)
 	p.addBuffer() // start with 1 buffer, ready to go
 	return p
 }
 
 func (p *bufferPool) addBuffer() {
 	for {
-		count := atomic.LoadInt64(&p.count)
+		count := p.count.Load()
 		if int(count) == cap(p.buffers) {
 			return // already at max buffers, no-op
 		}
-		if atomic.CompareAndSwapInt64(&p.count, count, count+1) {
+		if p.count.CompareAndSwap(count, count+1) {
 			break // successfully provisioned slot for new buffer
 		}
 	}
 	buf := &buffer{
-		Data: make([]byte, p.size),
+		Data: make([]byte, p.size.Load()),
 		pool: p,
 	}
 	p.buffers <- buf

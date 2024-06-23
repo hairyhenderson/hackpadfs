@@ -6,10 +6,10 @@ import (
 )
 
 type pubsub struct {
-	mu          sync.RWMutex
 	subscribers map[string][]context.CancelFunc
 	visited     map[string]bool
 	ctx         context.Context
+	mu          sync.RWMutex
 }
 
 // newPubsub creates a new pubsub that unblocks all calls to Wait when ctx is canceled

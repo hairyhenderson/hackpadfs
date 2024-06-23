@@ -1,6 +1,6 @@
 module github.com/hack-pad/hackpadfs
 
-go 1.18
+go 1.19
 
 require (
 	github.com/hack-pad/go-indexeddb v0.3.2

@@ -14,8 +14,8 @@ import (
 var _ keyvalue.TransactionStore = &store{}
 
 type store struct {
-	mu      sync.Mutex
 	records sync.Map
+	mu      sync.Mutex
 }
 
 func newStore() *store {
@@ -23,11 +23,11 @@ func newStore() *store {
 }
 
 type fileRecord struct {
+	data    blob.Blob
+	modTime time.Time
 	store   *store
 	path    string
-	data    blob.Blob
 	mode    hackpadfs.FileMode
-	modTime time.Time
 }
 
 func (f fileRecord) Data() (blob.Blob, error) {
@@ -108,8 +108,8 @@ type transaction struct {
 	ctx     context.Context
 	abort   context.CancelFunc
 	store   *store
-	op      keyvalue.OpID
 	results []keyvalue.OpResult
+	op      keyvalue.OpID
 }
 
 func (s *store) Transaction(options keyvalue.TransactionOptions) (keyvalue.Transaction, error) {
