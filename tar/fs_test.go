@@ -88,11 +88,12 @@ func copyTarWalk(src hackpadfs.FS, archive *tar.Writer) hackpadfs.WalkDirFunc {
 }
 
 // TestNewTarFromFS is a sanity check on the constructor we use in fstest. Just make sure it behaves normally for simple cases.
+// nolint:govet
 func TestNewTarFromFS(t *testing.T) {
 	t.Parallel()
 	for _, tc := range []struct {
-		do          func(t *testing.T, fs hackpadfs.FS)
 		description string
+		do          func(t *testing.T, fs hackpadfs.FS)
 	}{
 		{
 			description: "empty",

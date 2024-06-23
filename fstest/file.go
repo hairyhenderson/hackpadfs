@@ -87,6 +87,7 @@ func TestFileRead(tb testing.TB, o FSOptions) {
 	})
 }
 
+//nolint:govet
 func TestFileReadAt(tb testing.TB, o FSOptions) {
 	const fileContents = "hello world"
 	setupFS, commit := o.Setup.FS(tb)
@@ -94,12 +95,12 @@ func TestFileReadAt(tb testing.TB, o FSOptions) {
 	fs := commit()
 
 	for _, tc := range []struct {
-		expectErr   error
 		description string
-		expectBuf   string
-		off         int64
 		bufSize     int
+		off         int64
 		expectN     int
+		expectBuf   string
+		expectErr   error
 	}{
 		{
 			description: "at start",
@@ -653,12 +654,13 @@ func TestFileSync(tb testing.TB, o FSOptions) {
 	assert.NoError(tb, file.Close())
 }
 
+//nolint:govet
 func TestFileTruncate(tb testing.TB, o FSOptions) {
 	const fileContents = "hello world"
 	for _, tc := range []struct {
-		expectErrKind error
 		description   string
 		size          int64
+		expectErrKind error
 	}{
 		{
 			description:   "negative size",
