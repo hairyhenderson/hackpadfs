@@ -21,9 +21,8 @@ type ReadOnlyFS struct {
 	sourceFS  hackpadfs.FS
 	cacheFS   writableFS
 	cacheInfo sync.Map
-
-	options  ReadOnlyOptions
-	pathlock pathlock.Mutex
+	options   ReadOnlyOptions
+	pathlock  pathlock.Mutex
 }
 
 // ReadOnlyOptions contain options for creating a ReadOnlyFS

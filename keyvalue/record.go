@@ -112,34 +112,28 @@ func (b *BaseFileRecord) Sys() interface{} {
 }
 
 type runOnceFileRecord struct {
-	modTime time.Time
-
-	record FileRecord
-	data   blob.Blob
-	sys    interface{}
-
-	dataErr     error
-	dirNamesErr error
-
-	dirNames []string
-
-	size     int64
-	dataDone atomic.Int64
-
+	modTime      time.Time
+	record       FileRecord
+	data         blob.Blob
+	sys          interface{}
+	dataErr      error
+	dirNamesErr  error
+	dirNames     []string
+	size         int64
+	dataDone     atomic.Bool
 	dataOnce     sync.Once
 	dirNamesOnce sync.Once
 	modeOnce     sync.Once
 	modTimeOnce  sync.Once
 	sizeOnce     sync.Once
 	sysOnce      sync.Once
-
-	mode hackpadfs.FileMode
+	mode         hackpadfs.FileMode
 }
 
 func (r *runOnceFileRecord) Data() (blob.Blob, error) {
 	r.dataOnce.Do(func() {
 		r.data, r.dataErr = r.record.Data()
-		r.dataDone.Store(1)
+		r.dataDone.Store(true)
 	})
 	return r.data, r.dataErr
 }
@@ -155,7 +149,7 @@ func (r *runOnceFileRecord) Size() int64 {
 	r.sizeOnce.Do(func() {
 		r.size = r.record.Size()
 	})
-	if r.dataDone.Load() > 0 {
+	if r.dataDone.Load() {
 		return int64(r.data.Len())
 	}
 	return r.size

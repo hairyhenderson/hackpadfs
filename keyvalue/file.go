@@ -33,9 +33,8 @@ type file struct {
 }
 
 type fileData struct {
-	fs   *FS
-	path string // path is stored as the "key", keeping it here is for generating hackpadfs.FileInfo's
-
+	fs              *FS
+	path            string // path is stored as the "key", keeping it here is for generating hackpadfs.FileInfo's
 	modeOverride    *hackpadfs.FileMode
 	modTimeOverride time.Time
 	runOnceFileRecord

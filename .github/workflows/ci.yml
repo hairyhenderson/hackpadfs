@@ -24,6 +24,9 @@ jobs:
         go:
         - 1.19.x
         include:
+        - platform: ubuntu-latest
+          go: 1.19.x
+          goarch: '386'
         - platform: macos-latest
           go: 1.19.x
         - platform: windows-latest
@@ -37,6 +40,7 @@ jobs:
     - name: Test
       run: make test
       env:
+        GOARCH: ${{ matrix.goarch }}
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERAGE_VERSION: 1.19
   test32bit:
@@ -48,4 +52,4 @@ jobs:
     - name: Test on 32-bit platform
       run: |
         docker build --platform=linux/386 -t test_32bit -f Dockerfile.test .
-        docker run --platform=linux/386 --rm test_32bit go test -v ./...
+        docker run --platform=linux/386 --rm test_32bit go test ./...

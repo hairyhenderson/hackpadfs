@@ -31,7 +31,6 @@ func newBufferPool(bufferSize, maxBuffers uint64) *bufferPool {
 
 func (p *bufferPool) addBuffer() {
 	for {
-		// count := atomic.LoadInt64(&p.count)
 		count := p.count.Load()
 		if int(count) == cap(p.buffers) {
 			return // already at max buffers, no-op
