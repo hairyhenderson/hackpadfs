@@ -37,7 +37,6 @@ jobs:
     - name: Test
       run: make test
       env:
-        CGO_ENABLED: '0'
         GOARCH: ${{ matrix.goarch }}
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERAGE_VERSION: '1.19'

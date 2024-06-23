@@ -36,8 +36,11 @@ test-deps:
 race_goarches := 'amd64' 'arm64'
 ifeq (,$(findstring '$(GOARCH)',$(race_goarches)))
 TEST_ARGS=
+export CGO_ENABLED=0
 else
 TEST_ARGS=-race
+# the race detector needs cgo (at least on Linux and Windows, and macOS until Go 1.20)
+export CGO_ENABLED=1
 endif
 
 .PHONY: test
